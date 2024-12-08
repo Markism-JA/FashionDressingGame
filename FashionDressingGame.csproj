@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Include="..\TUI\Align.cs">
+        <Link>TUI\Align.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\BufferUtil.cs">
+        <Link>TUI\BufferUtil.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\Cell.cs">
+        <Link>TUI\Cell.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\CheckBox.cs">
+        <Link>TUI\CheckBox.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\ContainerWidget.cs">
+        <Link>TUI\ContainerWidget.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\DisplayWidget.cs">
+        <Link>TUI\DisplayWidget.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\InteractiveWidget.cs">
+        <Link>TUI\InteractiveWidget.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\Label.cs">
+        <Link>TUI\Label.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\Menu.cs">
+        <Link>TUI\Menu.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\TerminalBuffer.cs">
+        <Link>TUI\TerminalBuffer.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\TextBox.cs">
+        <Link>TUI\TextBox.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\Title.cs">
+        <Link>TUI\Title.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\Widgets.cs">
+        <Link>TUI\Widgets.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\Window.cs">
+        <Link>TUI\Window.cs</Link>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\TUI\TUI.csproj">
+        <Link>TUI\TUI.csproj</Link>
+      </Content>
+      <Content Include="..\TUI\TUI.sln">
+        <Link>TUI\TUI.sln</Link>
+      </Content>
+      <Content Include="..\TUI\TUI.sln.DotSettings.user">
+        <Link>TUI\TUI.sln.DotSettings.user</Link>
+      </Content>
+    </ItemGroup>
+
+</Project>
