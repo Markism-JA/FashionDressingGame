@@ -35,6 +35,9 @@
       <Compile Include="..\TUI\Menu.cs">
         <Link>TUI\Menu.cs</Link>
       </Compile>
+      <Compile Include="..\TUI\MenuForms.cs">
+        <Link>TUI\MenuForms.cs</Link>
+      </Compile>
       <Compile Include="..\TUI\TerminalBuffer.cs">
         <Link>TUI\TerminalBuffer.cs</Link>
       </Compile>
@@ -49,6 +52,9 @@
       </Compile>
       <Compile Include="..\TUI\Window.cs">
         <Link>TUI\Window.cs</Link>
+      </Compile>
+      <Compile Update="UI\Navigation.cs">
+        <Link>TUI\Navigation.cs</Link>
       </Compile>
     </ItemGroup>
 

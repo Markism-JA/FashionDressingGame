@@ -1,7 +1,6 @@
 using FashionDressingGame.Entity;
-using FashionDressingGame.Service.Info;
 
-namespace FashionDressingGame;
+namespace FashionDressingGame.Service;
 
 public class OuterWear : EOuterWear, IGrade
 {
@@ -19,12 +18,12 @@ public class OuterWear : EOuterWear, IGrade
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(outerWearType, ClothingInfo.OuterWearType) +
-                    getGradeValue(outerWearName, ClothingInfo.OuterWear);
+        int grade = getGradeValue(outerWearType, Info.OuterWear.OuterWearType) +
+                    getGradeValue(outerWearName, Info.OuterWear.OuterWearName);
         return grade;
     }
 
-    public OuterWear(string outerWearType, string outerWearName)
+    public OuterWear( string outerWearName, string outerWearType)
     {
         this.outerWearType = outerWearType;
         this.outerWearName = outerWearName;

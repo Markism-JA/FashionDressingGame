@@ -18,7 +18,7 @@ public class Bottom : EBottom, IGrade
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(type, ClothingInfo.BottomType) + getGradeValue(material, ClothingInfo.Materials);
+        int grade = getGradeValue(type, Info.Bottom.BottomType) + getGradeValue(material, Info.Bottom.Materials);
         return grade;
     }
 

@@ -1,6 +1,6 @@
 namespace FashionDressingGame.Service.Info;
 
-public struct CharacterInfo
+public struct Character
 {
     public static Dictionary<int, string> CharacterMenu { get; } = new()
     {

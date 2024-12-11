@@ -60,5 +60,10 @@ public static class Utilities
         return Console.ReadLine();
     }
     
+    public static List<TValue> ConvertDictionaryValuesToList<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
+    {
+        return new List<TValue>(dictionary.Values);
+    }
+    
     
 }

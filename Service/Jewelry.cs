@@ -35,11 +35,11 @@ public class Jewelry : EJewelry, IGrade
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(watches, JewelryInfo.Watches) +
-                    getGradeValue(earrings, JewelryInfo.Earrings) +
-                    getGradeValue(chains, JewelryInfo.Chains) +
-                    getGradeValue(anklets, JewelryInfo.Anklets)+
-                    getGradeValue(cufflink, JewelryInfo.Cufflinks);
+        int grade = getGradeValue(watches, Info.Jewelry.Watches) +
+                    getGradeValue(earrings, Info.Jewelry.Earrings) +
+                    getGradeValue(chains, Info.Jewelry.Chains) +
+                    getGradeValue(anklets, Info.Jewelry.Anklets)+
+                    getGradeValue(cufflink, Info.Jewelry.Cufflinks);
         return grade;
     }
 }

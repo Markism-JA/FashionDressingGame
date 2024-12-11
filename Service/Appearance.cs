@@ -22,11 +22,11 @@ public class Appearance : EAppearance, IGrade
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(skintone, AppearanceInfo.SkinTone) +
-                 getGradeValue(eyecolor, AppearanceInfo.EyeColor) +
-                 getGradeValue(haircolor, AppearanceInfo.HairColor) +
-                 getGradeValue(hairstyle, AppearanceInfo.HairColor) +
-                 getGradeValue(faceshape, AppearanceInfo.FaceShape);
+        int grade = getGradeValue(skintone, Info.Appearance.SkinTone) +
+                 getGradeValue(eyecolor, Info.Appearance.EyeColor) +
+                 getGradeValue(haircolor, Info.Appearance.HairColor) +
+                 getGradeValue(hairstyle, Info.Appearance.HairColor) +
+                 getGradeValue(faceshape, Info.Appearance.FaceShape);
         
         return grade;
     }

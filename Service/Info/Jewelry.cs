@@ -1,6 +1,6 @@
 namespace FashionDressingGame.Service.Info;
 
-public struct JewelryInfo
+public struct Jewelry
 {
 
     public static Dictionary<int, string> JewelryMenu = new()
@@ -10,7 +10,7 @@ public struct JewelryInfo
         {3, "Chains"},
         {4, "Anklets"},
         {5, "Cufflinks"},
-        
+        {6, "Next"}
     };
     public static Dictionary<string, Grade> Watches { get; } = new()
     {
@@ -53,7 +53,7 @@ public struct JewelryInfo
     {
         { "Cufflinks", Grade.Common },
         { "Chain Link Cufflinks", Grade.Rare },
-        { "Bullet back Cufflinks", Grade.Rare },
+        { "Bullet Cufflinks", Grade.Rare },
         { "Locking Cufflinks", Grade.Rare },
         { "Stud Cufflinks", Grade.Common },
         { "Fabric", Grade.Common }

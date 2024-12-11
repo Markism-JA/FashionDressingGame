@@ -36,12 +36,12 @@ public class Clothing : EClothing, IGrade
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(shoe, ClothingInfo.ShoeType) +
-                    getGradeValue(accessory, ClothingInfo.Accessories) +
-                    getGradeValue(gloves, ClothingInfo.Gloves) +
-                    getGradeValue(outfitTheme, ClothingInfo.OutfitThemes) +
-                    getGradeValue(formalWear, ClothingInfo.FormalWear) +
-                    getGradeValue(hat, ClothingInfo.Hats);
+        int grade = getGradeValue(shoe, Info.Clothing.ShoeType) +
+                    getGradeValue(accessory, Info.Clothing.Accessories) +
+                    getGradeValue(gloves, Info.Clothing.Gloves) +
+                    getGradeValue(outfitTheme, Info.Clothing.OutfitThemes) +
+                    getGradeValue(formalWear, Info.Clothing.FormalWear) +
+                    getGradeValue(hat, Info.Clothing.Hats);
         grade += top.CalculateGrade() + bottom.CalculateGrade() + jewelry.CalculateGrade() + outerWear.CalculateGrade();
         return grade;
     }

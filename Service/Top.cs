@@ -1,7 +1,6 @@
 using FashionDressingGame.Entity;
-using FashionDressingGame.Service.Info;
 
-namespace FashionDressingGame;
+namespace FashionDressingGame.Service;
 
 public class Top : ETop, IGrade
 {
@@ -19,8 +18,8 @@ public class Top : ETop, IGrade
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(type, ClothingInfo.TopType) + 
-                    getGradeValue(material, ClothingInfo.Materials);
+        int grade = getGradeValue(type, Info.Top.TopType) + 
+                    getGradeValue(material, Info.Top.Materials);
         return grade;
     }
 
