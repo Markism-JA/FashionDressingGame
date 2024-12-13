@@ -14,11 +14,17 @@
       <Compile Include="..\TUI\BufferUtil.cs">
         <Link>TUI\BufferUtil.cs</Link>
       </Compile>
+      <Compile Include="..\TUI\Button.cs">
+        <Link>TUI\Button.cs</Link>
+      </Compile>
       <Compile Include="..\TUI\Cell.cs">
         <Link>TUI\Cell.cs</Link>
       </Compile>
       <Compile Include="..\TUI\CheckBox.cs">
         <Link>TUI\CheckBox.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\ChildWindow.cs">
+        <Link>TUI\ChildWindow.cs</Link>
       </Compile>
       <Compile Include="..\TUI\ContainerWidget.cs">
         <Link>TUI\ContainerWidget.cs</Link>
@@ -32,11 +38,20 @@
       <Compile Include="..\TUI\Label.cs">
         <Link>TUI\Label.cs</Link>
       </Compile>
+      <Compile Include="..\TUI\LoadingBar.cs">
+        <Link>TUI\LoadingBar.cs</Link>
+      </Compile>
       <Compile Include="..\TUI\Menu.cs">
         <Link>TUI\Menu.cs</Link>
       </Compile>
       <Compile Include="..\TUI\MenuForms.cs">
         <Link>TUI\MenuForms.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\Pane.cs">
+        <Link>TUI\Pane.cs</Link>
+      </Compile>
+      <Compile Include="..\TUI\TableMenu.cs">
+        <Link>TUI\TableMenu.cs</Link>
       </Compile>
       <Compile Include="..\TUI\TerminalBuffer.cs">
         <Link>TUI\TerminalBuffer.cs</Link>
@@ -47,6 +62,9 @@
       <Compile Include="..\TUI\Title.cs">
         <Link>TUI\Title.cs</Link>
       </Compile>
+      <Compile Include="..\TUI\Typewritter.cs">
+        <Link>TUI\Typewritter.cs</Link>
+      </Compile>
       <Compile Include="..\TUI\Widgets.cs">
         <Link>TUI\Widgets.cs</Link>
       </Compile>
@@ -56,18 +74,23 @@
       <Compile Update="UI\Navigation.cs">
         <Link>TUI\Navigation.cs</Link>
       </Compile>
+      <Compile Remove="TUI\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\TUI\TUI.csproj">
-        <Link>TUI\TUI.csproj</Link>
-      </Content>
-      <Content Include="..\TUI\TUI.sln">
-        <Link>TUI\TUI.sln</Link>
-      </Content>
-      <Content Include="..\TUI\TUI.sln.DotSettings.user">
-        <Link>TUI\TUI.sln.DotSettings.user</Link>
-      </Content>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Remove="TUI\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="TUI\**" />
+    </ItemGroup>
 </Project>

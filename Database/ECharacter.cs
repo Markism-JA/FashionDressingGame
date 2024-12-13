@@ -1,14 +1,12 @@
-using FashionDressingGame.Service;
-
-namespace FashionDressingGame.Entity;
+namespace FashionDressingGame.Database;
 
 public class ECharacter
 {
     public int Id { get; set; }
     public int? AppearanceID { get; set; }
-    public virtual Appearance Appearance { get; set; }
+    public virtual EAppearance Appearance { get; set; }
     public int? ClothingID { get; set; }
-    public virtual Clothing Clothing { get; set; }
+    public virtual EClothing Clothing { get; set; }
     
     public virtual string Name { get; set; }
     public virtual string Gender { get; set; }

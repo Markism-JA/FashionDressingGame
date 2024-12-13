@@ -1,4 +1,4 @@
-namespace FashionDressingGame.Entity;
+namespace FashionDressingGame.Database;
 
 public class EBottom
 {

@@ -1,32 +1,31 @@
 using FashionDressingGame.UI;
+using System.Diagnostics;
+using FashionDressingGame.Database;
+using FashionDressingGame.Service;
 
-namespace FashionDressingGame;
-
-public class Program
+namespace FashionDressingGame
 {
-    public static void Main(string[] args)
+    public class Program
     {
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
-        try
+        public static void Main(string[] args)
         {
-            Console.CursorVisible = false;
-            // MainMenu();
-            // New.NewPlayer();
-            // New.GetClothing();
-            // New.GetAppearance();
-            New.GetCharacterInfo();
-            New.GetAppearanceInfo();
-            New.GetCharacterInfo();
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.Title = "FashionDressingGame";
+            
+            MainMenu newGame = new MainMenu();
+            try
+            {
+                 newGame.Start();
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
+            
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
-        }
-        finally
-        {
-            Console.WriteLine("Press any key to exit.");
-            Console.ReadKey();  
-        }
+        
     }
 }

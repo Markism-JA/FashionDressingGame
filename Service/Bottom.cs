@@ -1,14 +1,13 @@
-using FashionDressingGame.Entity;
-using FashionDressingGame.Service.Info;
-
+using FashionDressingGame.Database;
 namespace FashionDressingGame.Service;
+
 public class Bottom : EBottom, IGrade
 {
-    private string type;
-    private string material;
-
-    public override string Material { get => material; set => material = value; }
-    public override string Type { get => type; set => type = value; }
+    public Bottom(string type, string material)
+    {
+        Type = type;
+        Material = material;
+    }
 
     public int CalculateGrade()
     {
@@ -18,15 +17,30 @@ public class Bottom : EBottom, IGrade
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(type, Info.Bottom.BottomType) + getGradeValue(material, Info.Bottom.Materials);
-        return grade;
+
+        return getGradeValue(Type, Info.Bottom.BottomType) + 
+               getGradeValue(Material, Info.Bottom.Materials);
     }
 
-    public Bottom(string type, string material)
+    public override string Type
     {
-        this.type = type;
-        this.material = material;
+        get => base.Type;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Type cannot be null or empty.");
+            base.Type = value;
+        }
     }
-    
-    
+
+    public override string Material
+    {
+        get => base.Material;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Material cannot be null or empty.");
+            base.Material = value;
+        }
+    }
 }

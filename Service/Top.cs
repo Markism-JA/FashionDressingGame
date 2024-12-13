@@ -1,31 +1,59 @@
-using FashionDressingGame.Entity;
+using FashionDressingGame.Database;
 
 namespace FashionDressingGame.Service;
 
 public class Top : ETop, IGrade
 {
-    private string type;
-    private string material;
+    public Top(string type, string material)
+    {
+        Type = type;
+        Material = material;
+    }
 
-    public override string Type { get => type; set => type = value; }
-    public override string Material { get => material; set => material = value; }
+    public override string Type
+    {
+        get => base.Type;
+        set
+        {
+            ValidateInput(value, nameof(Type));
+            base.Type = value;
+        }
+    }
+
+    public override string Material
+    {
+        get => base.Material;
+        set
+        {
+            ValidateInput(value, nameof(Material));
+            base.Material = value;
+        }
+    }
 
     public int CalculateGrade()
     {
-        Func<string, Dictionary<string, Grade>, int> getGradeValue = (key, gradeDictionary) =>
+        // A reusable lambda for fetching grade values safely
+        Func<string?, Dictionary<string, Grade>, int> getGradeValue = (key, gradeDictionary) =>
         {
+            if (string.IsNullOrWhiteSpace(key)) return 0; // Treat null or empty as 0.
             return gradeDictionary.TryGetValue(key, out var grade)
                 ? (int)grade
                 : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
         };
-        int grade = getGradeValue(type, Info.Top.TopType) + 
-                    getGradeValue(material, Info.Top.Materials);
+
+        // Calculate the grade based on type and material
+        int grade = getGradeValue(Type, Info.Top.TopType) +
+                    getGradeValue(Material, Info.Top.Materials);
+
         return grade;
     }
 
-    public Top(string type, string material)
+    private static void ValidateInput(string? input, string propertyName)
     {
-        this.type = type;
-        this.material = material;
+        if (input == null) return;
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            throw new ArgumentException($"{propertyName} cannot be empty or whitespace.");
+        }
     }
 }

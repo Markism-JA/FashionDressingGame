@@ -1,45 +1,34 @@
-using FashionDressingGame.Entity;
-using FashionDressingGame.Service.Info;
+using FashionDressingGame.Database;
 
 namespace FashionDressingGame.Service;
 
 public class Jewelry : EJewelry, IGrade
 {
-    private string? watches;
-    private string? earrings;
-    private string? chains;
-    private string? anklets;
-    private string? cufflink;
-
-    public override string? Watches { get => watches; set => watches = value; }
-    public override string? Earrings { get => earrings; set => earrings = value; }
-    public override string? Chains { get => chains; set => chains = value; }
-    public override string? Anklets { get => anklets; set => anklets = value; }
-    public override string? Cufflinks { get => cufflink; set => cufflink = value; }
-
     public Jewelry(string? watches, string? earrings, string? chains, string? anklets, string? cufflink)
     {
-        this.watches = watches;
-        this.earrings = earrings;
-        this.chains = chains;
-        this.anklets = anklets;
-        this.cufflink = cufflink;
+        Watches = watches;
+        Earrings = earrings;
+        Chains = chains;
+        Anklets = anklets;
+        Cufflinks = cufflink;
     }
-
     public int CalculateGrade()
     {
         Func<string, Dictionary<string, Grade>, int> getGradeValue = (key, gradeDictionary) =>
         {
-            if (key == null) return 0;
+            if (string.IsNullOrWhiteSpace(key)) return 0;  // Return 0 if the jewelry is null or empty
             return gradeDictionary.TryGetValue(key, out var grade)
                 ? (int)grade
-                : throw new KeyNotFoundException($"Grade key '{key}' not found in the dictionary.");
+                : 0;  // Return 0 if the grade key is not found
         };
-        int grade = getGradeValue(watches, Info.Jewelry.Watches) +
-                    getGradeValue(earrings, Info.Jewelry.Earrings) +
-                    getGradeValue(chains, Info.Jewelry.Chains) +
-                    getGradeValue(anklets, Info.Jewelry.Anklets)+
-                    getGradeValue(cufflink, Info.Jewelry.Cufflinks);
+
+        int grade = getGradeValue(Watches, Info.Jewelry.Watches) +
+                    getGradeValue(Earrings, Info.Jewelry.Earrings) +
+                    getGradeValue(Chains, Info.Jewelry.Chains) +
+                    getGradeValue(Anklets, Info.Jewelry.Anklets) +
+                    getGradeValue(Cufflinks, Info.Jewelry.Cufflinks);
+
         return grade;
     }
+
 }

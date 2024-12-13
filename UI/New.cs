@@ -1,3 +1,4 @@
+using FashionDressingGame.Database;
 using FashionDressingGame.Service;
 using TUI;
 
@@ -5,35 +6,34 @@ namespace FashionDressingGame.UI;
 
 public class New
 {
-    public static Character NewCharacter { get; set; } = null!;
-    private static Appearance NewAppearance { get; set; } = null!;
-    private static Clothing NewClothing { get; set; } = null!;
-    private static Top NewTop { get; set; } = null!;
-    private static Bottom NewBottom { get; set; } = null!;
-    private static Jewelry NewJewelry { get; set; } = null!;
-    private static OuterWear NewOuterWear { get; set; } = null!;
-
-    private static Stack<Func<int>> NewActions { get; set; } = null!;
-    private static List<Func<int>> NewActionsList { get; set; } = null!;
+    private static FashionGameDbContext _dbContex = new FashionGameDbContext();
+    private static CharacterService _characterService = new CharacterService(_dbContex);
+    public Character NewCharacter { get; set; } = null!;
+    private Appearance NewAppearance { get; set; } = null!;
+    private Clothing NewClothing { get; set; } = null!;
+    private Top NewTop { get; set; } = null!;
+    private Bottom NewBottom { get; set; } = null!;
+    private Jewelry NewJewelry { get; set; } = null!;
+    private OuterWear NewOuterWear { get; set; } = null!;
 
     public static int WindowHeight = 37;
     public static int WindowWidth = 100;
     
     //Holding Variable
-    private static (string Name, string Gender, string Height, string Age) _characterInfo = (null, null, null, null)!;
+    private (string Name, string Gender, string Height, string Age) _characterInfo = (null, null, null, null)!;
     
-    private static (string Skintone, string Eyecolor, string Haircolor, string Hairstyle, string Faceshape,
+    private (string Skintone, string Eyecolor, string Haircolor, string Hairstyle, string Faceshape,
         bool Freckles, bool Dimple, bool Acne) _appearanceInfo = (null, null, null, null, null, false, false, false)!;
     
-    private static (string? FormalWear, string? ShoeType, string? Accessory, 
+    private (string? FormalWear, string? ShoeType, string? Accessory, 
         string? Gloves, string? OutfitThemes, string? Hat) _clothingInfo = 
             (null, null, null, null, null, null);
 
-    private static (string? TopType, string? TopMaterial) _topInfo = (null, null);
-    private static (string? BottomType, string? BottomMaterial) _bottomInfo = (null, null);
-    private static (string? Watches, string? Earrings, string? Chains, string? Anklets, string? Cufflinks)
+    private (string? TopType, string? TopMaterial) _topInfo = (null, null);
+    private (string? BottomType, string? BottomMaterial) _bottomInfo = (null, null);
+    private (string? Watches, string? Earrings, string? Chains, string? Anklets, string? Cufflinks)
         _jewelryInfo = (null, null, null, null, null);
-    private static (string? Outerwear, string? OuterwearType) _outerwearInfo = (null, null);
+    private (string? Outerwear, string? OuterwearType) _outerwearInfo = (null, null);
     
     //Title 
     private static string[] _whoAreYou =
@@ -72,14 +72,13 @@ public class New
     private static Window _characterWindow = new(null, null, WindowWidth, WindowHeight)
     {
         BorderOn = true,
-        // GridOn = true,
         BorderHorizontal = '*',
         BorderVertical = '*',
         BorderBackgroundColor = ConsoleColor.White,
         BorderForegroundColor = ConsoleColor.Black,
     };
 
-    private static Window _appearanceWindow = new(null, null, WindowWidth, WindowHeight)
+    private Window _appearanceWindow = new(null, null, WindowWidth, WindowHeight)
     {
         BorderOn = true,
         BorderHorizontal = '*',
@@ -88,7 +87,7 @@ public class New
         BorderForegroundColor = ConsoleColor.Black,
     };
 
-    private static Window _clothingWindow = new(null, null, WindowWidth, WindowHeight)
+    private Window _clothingWindow = new(null, null, WindowWidth, WindowHeight)
     {
         BorderOn = true,
         BorderHorizontal = '*',
@@ -98,48 +97,47 @@ public class New
     };
 
     
-    private static Label _valueMissingWarning = new("Values Missing", null,28,null,null, Align.Center);
+    private Label _valueMissingWarning = new("Values Missing", null,28,null,null, Align.Center);
 
     private static int _menuWidth = 25;
     private static int _menuX = 25;
     
     //Character Info state
-    private static Title _characterTitle = new(_whoAreYou, null, 6, ConsoleColor.Black, ConsoleColor.Magenta, Align.Center);
-    private static Label _namelabel = new Label("Name:", 33,14,ConsoleColor.Black,ConsoleColor.DarkBlue, Align.Left);
+    private Title _characterTitle = new(_whoAreYou, null, 6, ConsoleColor.Black, ConsoleColor.Magenta, Align.Center);
+    private Label _namelabel = new Label("Name:", 33,14,ConsoleColor.Black,ConsoleColor.DarkBlue, Align.Left);
     private static Label _nameWarning = new Label("", null,15,null,null, Align.Center);
     private static TextBox _nameText = new TextBox(40, 14, 30, 1, 30);
-    private static MenuForms _characterMenu = new(Service.Info.Character.CharacterMenu, _menuX, 18, _menuWidth, 10);
-    private static Action _addName = () => { _nameText.IsFinalized = false; _characterWindow.AddChild(_nameWarning); 
+    private MenuForms _characterMenu = new(Service.Info.Character.CharacterMenu, _menuX, 18, _menuWidth, 10);
+    private Action _addName = () => { _nameText.IsFinalized = false; _characterWindow.AddChild(_nameWarning); 
         _characterWindow.RenderAll(); };
-    private static Action _removeName = () => { _characterWindow.RemoveChild(_nameWarning); };
+    private Action _removeName = () => { _characterWindow.RemoveChild(_nameWarning); };
     
     //Appearance Info state
-    private static Title _appearanceTitle = new(_yourLook, null, 6, null, null, Align.Center);
-    private static MenuForms _appearanceMenu = new(Service.Info.Appearance.AppearanceMenu, _menuX, 16, _menuWidth, 10);
+    private Title _appearanceTitle = new(_yourLook, null, 6, null, null, Align.Center);
+    private MenuForms _appearanceMenu = new(Service.Info.Appearance.AppearanceMenu, _menuX, 16, _menuWidth, 10);
     
     //Clothing Info state
-    private static Title _clothingTitle = new(_yourOotd, null, 6, null, null, Align.Center);
-    private static MenuForms _clothingMainMenu = new(Service.Info.Clothing.ClothingMenu, _menuX, 12, _menuWidth, 10);
+    private Title _clothingTitle = new(_yourOotd, null, 6, null, null, Align.Center);
+    private MenuForms _clothingMainMenu = new(Service.Info.Clothing.ClothingMenu, _menuX, 12, _menuWidth, 10);
     
     //Top Info state
-    private static MenuForms _topMenu = new(Service.Info.Top.TopMenu, _menuX, 13, _menuWidth, 10);
-    private static Label _topWarning = new("Values Missing", null,19,null,null, Align.Center);
+    private MenuForms _topMenu = new(Service.Info.Top.TopMenu, _menuX, 13, _menuWidth, 10);
+    private Label _topWarning = new("Values Missing", null,19,null,null, Align.Center);
     
     //Bottom Info state
-    private static MenuForms _bottomMenu = new(Service.Info.Bottom.BottomMenu, _menuX, 13, _menuWidth, 10);
-    private static Label _bottomWarning = new("Values Missing", null,19,null,null, Align.Center);
+    private MenuForms _bottomMenu = new(Service.Info.Bottom.BottomMenu, _menuX, 13, _menuWidth, 10);
+    private Label _bottomWarning = new("Values Missing", null,19,null,null, Align.Center);
     
     //Outerwear Info state
-    private static MenuForms _outerWearMenu = new MenuForms(Service.Info.OuterWear.OuterWearMenu, 20, 13, 30, 10);
-    private static Label _outerwearWarning = new("Values Missing", null,19,null,null, Align.Center);
+    private MenuForms _outerWearMenu = new MenuForms(Service.Info.OuterWear.OuterWearMenu, 20, 13, 30, 10);
+    private Label _outerwearWarning = new("Values Missing", null,19,null,null, Align.Center);
 
     //Jewelry Info state
-    private static MenuForms _jewelMenu = new MenuForms(Service.Info.Jewelry.JewelryMenu, _menuX, 13, _menuWidth, 10);
-    private static Label _optional = new("OPTIONAL", null,25,null,null, Align.Center);
+    private MenuForms _jewelMenu = new MenuForms(Service.Info.Jewelry.JewelryMenu, _menuX, 13, _menuWidth, 10);
+    private Label _optional = new("OPTIONAL", null,25,null,null, Align.Center);
     
-    public static void SetCharacter()
+    public void SetCharacter()
     {
-        NewCharacter = new Character(_characterInfo.Name, _characterInfo.Gender, _characterInfo.Height, _characterInfo.Age);
         NewAppearance = new Appearance(_appearanceInfo.Skintone, _appearanceInfo.Eyecolor, _appearanceInfo.Haircolor,
             _appearanceInfo.Hairstyle, _appearanceInfo.Faceshape);
         NewTop = new Top(_topInfo.TopType!, _topInfo.TopMaterial!);
@@ -148,10 +146,84 @@ public class New
         NewOuterWear = new OuterWear(_outerwearInfo.Outerwear!, _outerwearInfo.OuterwearType!);
         NewClothing = new Clothing(NewTop, NewBottom, _clothingInfo.ShoeType!, _clothingInfo.Accessory!, _clothingInfo.Gloves!,
             NewJewelry, _clothingInfo.OutfitThemes!, _clothingInfo.FormalWear!, NewOuterWear, _clothingInfo.Hat!);
+        
+        NewCharacter = new Character(_characterInfo.Name, _characterInfo.Gender, _characterInfo.Height, _characterInfo.Age, NewAppearance, NewClothing);
+        
+
+         try
+         {
+             DatabaseUtils.AddCharacter(NewCharacter);
+         }
+         catch (Exception ex)
+         {
+             Console.WriteLine($"Error: {ex.Message}");
+             Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}");
+             throw;
+         }
+
     }
-    public static void GetCharacterInfo()
+
+    public void SetState(ECharacter character)
     {
-        Console.Clear();
+        _nameText.Text = character.Name;
+        _characterInfo.Name = character.Name;
+        _characterInfo.Gender = character.Gender;
+        _characterInfo.Height = character.Height;
+        _characterInfo.Age = character.Age;
+
+        _appearanceInfo.Faceshape = character.Appearance.FaceShape;
+        _appearanceInfo.Eyecolor = character.Appearance.EyeColor;
+        _appearanceInfo.Haircolor = character.Appearance.HairColor;
+        _appearanceInfo.Hairstyle = character.Appearance.HairStyle;
+        _appearanceInfo.Freckles = character.Appearance.Freckles;
+        _appearanceInfo.Dimple = character.Appearance.Dimples;
+        _appearanceInfo.Acne = character.Appearance.Acne;
+        
+        _topInfo.TopType = character.Clothing.Top.Type;
+        _topInfo.TopMaterial = character.Clothing.Top.Material;
+        
+        _bottomInfo.BottomType = character.Clothing.Bottom.Type;
+        _bottomInfo.BottomMaterial = character.Clothing.Bottom.Material;
+        
+        _outerwearInfo.Outerwear = character.Clothing.OuterWear.OuterWearName;
+        _outerwearInfo.OuterwearType = character.Clothing.OuterWear.OuterWearType;
+        
+        _jewelryInfo.Cufflinks = character.Clothing.Jewelry.Cufflinks;
+        _jewelryInfo.Watches = character.Clothing.Jewelry.Watches;
+        _jewelryInfo.Earrings = character.Clothing.Jewelry.Earrings;
+        _jewelryInfo.Chains = character.Clothing.Jewelry.Chains;
+        _jewelryInfo.Anklets = character.Clothing.Jewelry.Anklets;
+        
+        _clothingInfo.Accessory = character.Clothing.Accessory;
+        _clothingInfo.Gloves = character.Clothing.Gloves;
+        _clothingInfo.Hat = character.Clothing.Hat;
+        _clothingInfo.FormalWear = character.Clothing.FormalWear;
+        _clothingInfo.OutfitThemes = character.Clothing.OutfitTheme;
+        _clothingInfo.ShoeType = character.Clothing.Shoe;
+        
+        Dictionary<string, bool> newStates = new Dictionary<string, bool>(_checkboxWidget.CheckedStates);
+
+        foreach (var option in newStates)
+        {
+            switch (option.Key)
+            {
+                case "Freckles": 
+                    newStates[option.Key] = character.Appearance.Freckles;
+                    break;
+                case "Dimples":
+                    newStates[option.Key] = character.Appearance.Dimples;
+                    break;
+                case "Acne":
+                    newStates[option.Key] = character.Appearance.Acne;
+                    break;
+            }
+        }
+        _checkboxWidget.CheckedStates = newStates;
+    }
+    public int GetCharacterInfo()
+    {
+        int val = 0;
+        Console.Write("\x1B[?47h"); //Move to a different buffer
         _characterWindow.AddChild(_characterTitle);
         _characterWindow.AddChild(_namelabel);
         _characterWindow.AddChild(_nameWarning);
@@ -192,7 +264,7 @@ public class New
                 finalizedName = false;
             }
         } while (finalizedName);
-        
+
         do
         {
             _characterWindow.AddChild(_characterMenu);
@@ -209,6 +281,7 @@ public class New
                     {
                         _nameText.IsFinalized = false;
                         _characterMenu.SelectionMade = false;
+                        val = 1;
                         break;
                     }
                     else
@@ -216,7 +289,8 @@ public class New
                         _characterWindow.AddChild(_valueMissingWarning);
                     }
                 }
-                else if (Utilities.ConvertDictionaryValuesToList(Service.Info.Character.CharacterMenu).Contains(selectedItem))
+                else if (Utilities.ConvertDictionaryValuesToList(Service.Info.Character.CharacterMenu)
+                         .Contains(selectedItem))
                 {
                     _characterWindow.RemoveChild(_valueMissingWarning);
                     var value = ProcessMenu(
@@ -225,7 +299,7 @@ public class New
                         selectedItem == "Age" ? Service.Info.Character.Age :
                         throw new InvalidOperationException("Unexpected selected item"),
                         _characterWindow, _characterMenu, 18, 40, 1);
-                    
+
                     _characterMenu.SetFormValue(selectedItem, value);
                     if (selectedItem == "Gender") _characterInfo.Gender = value;
                     else if (selectedItem == "Height") _characterInfo.Height = value;
@@ -234,14 +308,22 @@ public class New
 
                 _characterMenu.SelectionMade = false;
             }
+
             if (key == ConsoleKey.Escape) break;
         } while (true);
+        
+        Console.Clear();
+        Console.Write("\x1B[?47l");
+        
+        return val;
     }
-    public static void GetAppearanceInfo()
+    public int GetAppearanceInfo()
     {
+        int val = 0;
+        Console.Write("\x1B[?47h"); //Move to a different buffer
         _valueMissingWarning.Y = 30;
         _appearanceWindow.AddChild(_appearanceTitle);
-
+        
         do
         {
             _appearanceWindow.AddChild(_appearanceMenu);
@@ -257,6 +339,7 @@ public class New
                     if (!_isTupleNullOrEmpty(_appearanceInfo))
                     {
                         _appearanceMenu.SelectionMade = false;
+                        val = 1;
                         break;
                     }
                     else
@@ -267,7 +350,7 @@ public class New
                 else if (selectedItem == "Optional")
                 {
                     Dictionary<string, bool> dummy = ProcessCheckbox(Service.Info.Appearance.OptionalMenu, _appearanceWindow, _appearanceMenu, 18);
-                    _appearanceMenu.SetFormValue("Optional", "SELECTED");
+                    _appearanceMenu.SetFormValue("Optional", GetAppearanceString(_checkboxWidget.CheckedStates));
                     foreach (var kvp in dummy)
                     {
                         if (kvp.Key == "Freckles") _appearanceInfo.Freckles = kvp.Value;
@@ -302,9 +385,15 @@ public class New
 
             if (key == ConsoleKey.Escape) break;
         } while (true);
+        Console.Clear();
+        Console.Write("\x1B[?47l");
+
+        return val;
     }
-    public static void GetClothingInfo()
+    public int GetClothingInfo()
     {
+        int val = 0;
+        Console.Write("\x1B[?47h"); //Move to a different buffer
         _valueMissingWarning.Y = 34;
         _clothingWindow.AddChild(_clothingTitle);
 
@@ -320,8 +409,12 @@ public class New
                 string selectedItem = _clothingMainMenu.GetSelectedItem();
                 if (selectedItem == "Next")
                 {
-                    _clothingMainMenu.SelectionMade = false;
-                    if (!_isTupleNullOrEmpty(_clothingInfo)) break;
+                    if (!_isTupleNullOrEmpty(_clothingInfo))
+                    {
+                        _clothingMainMenu.SelectionMade = false;
+                        val = 1;
+                        break;
+                    }
                     else
                     {
                         _clothingWindow.AddChild(_valueMissingWarning);
@@ -350,7 +443,7 @@ public class New
                         action();
                         if (selectedItem == "Top") _clothingMainMenu.SetFormValue(selectedItem, $"{_topInfo.TopType} : {_topInfo.TopMaterial}");
                         else if (selectedItem == "Bottom") _clothingMainMenu.SetFormValue(selectedItem, $"{_bottomInfo.BottomType} : {_bottomInfo.BottomMaterial}");
-                        else if (selectedItem == "Jewelry") _clothingMainMenu.SetFormValue(selectedItem, GetJewelryEmojis(_jewelryInfo));
+                        else if (selectedItem == "Jewelry") _clothingMainMenu.SetFormValue(selectedItem, _getJewelryEmojis(_jewelryInfo));
                         else if (selectedItem == "Outer Wear") _clothingMainMenu.SetFormValue(selectedItem, $"{_outerwearInfo.Outerwear} : {_outerwearInfo.OuterwearType}");
                     }
                     else
@@ -371,9 +464,12 @@ public class New
             if (key == ConsoleKey.Escape) break;
             
         } while (true);
-        
+        Console.Clear();
+        Console.Write("\x1B[?47l");
+
+        return val;
     }
-    private static void GetTopInfo()
+    private void GetTopInfo()
     {
         do
         {
@@ -420,7 +516,7 @@ public class New
         _clothingWindow.RemoveChild(_topMenu);
         _clothingWindow.RenderAll();
     }
-    private static void GetBottomInfo()
+    private void GetBottomInfo()
     {
 
         do
@@ -467,7 +563,7 @@ public class New
         _clothingWindow.RemoveChild(_bottomMenu);
         _clothingWindow.RenderAll();
     }
-    private static void GetOuterWearInfo()
+    private void GetOuterWearInfo()
     {
         do
         {
@@ -514,7 +610,7 @@ public class New
         _clothingWindow.RemoveChild(_outerWearMenu);
         _clothingWindow.RenderAll();
     }
-    private static void GetJewelryInfo()
+    private void GetJewelryInfo()
     {
         do
         {
@@ -564,7 +660,7 @@ public class New
         _clothingWindow.RemoveChild(_optional);
         _clothingWindow.RenderAll();
     }
-    private static string ProcessMenu(Dictionary<int, string> dictionary, Window window, MenuForms mainMenu,int y, int x, int column)
+    private string ProcessMenu(Dictionary<int, string> dictionary, Window window, MenuForms mainMenu,int y, int x, int column)
     {
         window.RemoveChild(mainMenu);
         window.RenderAll();
@@ -595,33 +691,32 @@ public class New
     
         return selectedValue;
     }
-    private static Dictionary<string, bool> ProcessCheckbox(Dictionary<int, string> dictionary, Window window, MenuForms mainMenu, int y)
+    private Dictionary<string, bool> ProcessCheckbox(Dictionary<int, string> dictionary, Window window, MenuForms mainMenu, int y)
     {
         window.RemoveChild(mainMenu);
         window.RenderAll();
-
-        CheckBox checkboxWidget = new(dictionary, 42, y, 10, 1);
-
+        
+        _checkboxWidget.SelectionMade = false;
         while (true)
         {
-            window.AddChild(checkboxWidget);
+            window.AddChild(_checkboxWidget);
             window.RenderAll();
             ConsoleKey key = Console.ReadKey(true).Key;
-            checkboxWidget.HandleInput(key);
+            _checkboxWidget.HandleInput(key);
 
-            if (checkboxWidget.SelectionMade || key == ConsoleKey.Escape)
+            if (_checkboxWidget.SelectionMade || key == ConsoleKey.Escape)
             {
                 break;
             }
         }
 
-        window.RemoveChild(checkboxWidget);
+        window.RemoveChild(_checkboxWidget);
         window.RenderAll();
 
-        return checkboxWidget.CheckedStates;
+        return _checkboxWidget.CheckedStates;
     }
     
-    private static Func<object, bool> _isTupleNullOrEmpty = tuple =>
+    private Func<object, bool> _isTupleNullOrEmpty = tuple =>
         tuple.GetType().GetFields().Any(f =>
         {
             var value = f.GetValue(tuple);
@@ -634,7 +729,7 @@ public class New
             };
         });
 
-    public static Func<(string? Watches, string? Earrings, string? Chains, string? Anklets, string? Cufflinks), string> GetJewelryEmojis = jewelryInfo =>
+    private Func<(string? Watches, string? Earrings, string? Chains, string? Anklets, string? Cufflinks), string> _getJewelryEmojis = jewelryInfo =>
     {
         var emojiMap = new (string? item, string emoji)[]
         {
@@ -654,9 +749,139 @@ public class New
 
         return string.Join("", selectedEmojis);
     };
-
-    public static void Start()
+    
+    public static string GetAppearanceString(Dictionary<string, bool> features)
     {
-        
+        List<string> selectedFeatures = new List<string>();
+
+        foreach (var feature in features)
+        {
+            if (feature.Value)
+            {
+                selectedFeatures.Add($"[{feature.Key}]");
+            }
+        }
+
+        if (selectedFeatures.Count > 2)
+        {
+            return string.Join(", ", selectedFeatures.Take(2)) + "...";
+        }
+
+        return string.Join(", ", selectedFeatures);
     }
+
+    private CheckBox _checkboxWidget = new CheckBox(Service.Info.Appearance.OptionalMenu, 42, 18, 10, 1);
+
+    public int ShowGradingAnimation()
+    {
+        Console.Write("\x1B[?47h"); //Move to a different buffer
+        ConsoleColor background = ConsoleColor.DarkYellow;
+        ConsoleColor bar = ConsoleColor.White;
+        Window mainWindow = new Window(0, 0, 100, 37, background)
+        {
+            BorderOn = true,
+            // GridOn = true,
+            BorderHorizontal = '*',
+            BorderVertical = '*',
+            BorderBackgroundColor = ConsoleColor.White,
+            BorderForegroundColor = ConsoleColor.Black,
+        };
+            
+        Label newlabel = new Label("Calculating Score...", 0, 16, ConsoleColor.Black, background, Align.Center);
+        LoadingBar newloading = new LoadingBar(29, 17, 40, 1, null, bar, 20000);
+        mainWindow.AddChild(newlabel);
+            
+        mainWindow.RenderAll();
+        
+        SetCharacter();
+        mainWindow.AddChild(newloading);
+        mainWindow.RenderAll();
+        
+        Label pressAny = new Label("Press any key to go back to Main Menu....", 0, 33, ConsoleColor.Black, background, Align.Center);
+        String message = String.Empty;
+        
+        switch (FashionGrader.CalculateGrade(NewCharacter.CharacterGrade))
+        {
+            case CharacterGrade.NeedImprovement:
+                message = $"{NewCharacter.CharacterGrade} points, Your Fashion needs Improvement :(";
+                break;
+            case CharacterGrade.CoolTrendsetter:
+                message = $"{NewCharacter.CharacterGrade} points, You are a Cool Trendsetter!";
+                break;
+            case CharacterGrade.StylishCelebrity:
+                message = $"{NewCharacter.CharacterGrade} points, Wow! You have become a stylish celebrity!";
+                break;
+            case CharacterGrade.IconicSuperstar:
+                message = $"{NewCharacter.CharacterGrade} points, You are an Iconic Superstar!";
+                break;
+            case CharacterGrade.FashionIdolLegend:
+                message = $"{NewCharacter.CharacterGrade} points, Your Fashion is impeccable! You're a Fashion Idol Legend!";
+                break;
+        }
+        
+        Label grade = new Label(message, 0, 17, ConsoleColor.Black, background, Align.Center);
+        mainWindow.RemoveChild(newloading);
+        mainWindow.RemoveChild(newlabel);
+        
+        mainWindow.AddChild(grade);
+        mainWindow.AddChild(pressAny);
+        mainWindow.RenderAll();
+        
+        Console.ReadKey();
+        Console.Clear();
+        Console.Write("\x1B[?47l");
+        return 1;
+    }
+    
+    public void Start()
+    {
+        Navigation navigation = new Navigation();
+
+        List<Func<int>> actions = new List<Func<int>>()
+        {
+            GetCharacterInfo,
+            GetAppearanceInfo,
+            GetClothingInfo,
+            ShowGradingAnimation,
+        };
+
+        int i = 0; 
+        navigation.Navigate(actions[i]);
+
+        while (true)
+        {
+            int result = navigation.ShowCurrentWindow(); 
+
+            if (result == 0) 
+            {
+                i--;
+                if (i >= 0)
+                {
+                    navigation.GoBack();
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else if (result == 1)
+            {
+                i++;
+                if (i < actions.Count)
+                {
+                    navigation.Navigate(actions[i]);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+
 }

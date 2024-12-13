@@ -16,7 +16,7 @@ public class MainMenu
         "                                                                  "
     ];
 
-    private static Window _mainMenu = new Window(null, null, WindowWidth, WindowHeight)
+    private Window _mainWindow = new Window(null, null, WindowWidth, WindowHeight)
     {
         BorderOn = true,
         BorderHorizontal = '*',
@@ -33,24 +33,42 @@ public class MainMenu
         {4, "Credits"},
         {5, "Exit"},
     };
+    private Title _mainMenuTitle = new Title(_titleArt, null, 8, null, null, Align.Center);
     
-    private static Title _mainMenuTitle = new Title(_titleArt, null, 8, null, null, Align.Center);
-    
-    public static void Start()
+    private Menu _mainMenu = new Menu(_menuItems, 44, 15, 13, 10);
+    public void Start()
     {
-        var menu = new Menu(_menuItems, 40, 15, 13, 10);
-        _mainMenu.AddChild(_mainMenuTitle);
-
+        New newGame = new New();
+        Load newLoad = new Load();
+        Campaign newCampaign = new Campaign(); 
+        Credits newCredits = new Credits();
+        Label newLabel = new Label("Use Arrow Keys For Navigation", 0, 30, null, null, Align.Center); 
+        Label newlabel1 = new Label("Enter to select and Escape to go back", 0, 31, null, null, Align.Center);
+        _mainWindow.AddChild(newlabel1);
+        _mainWindow.AddChild(newLabel);
+        
+        _mainWindow.AddChild(_mainMenuTitle);
         do
         {
-            _mainMenu.AddChild(menu);
-            _mainMenu.RenderAll();
+            _mainWindow.AddChild(_mainMenu);
+            _mainWindow.RenderAll();
             ConsoleKey key = Console.ReadKey(true).Key;
-            menu.HandleInput(key);
-            if (menu.SelectionMade)
+            _mainMenu.HandleInput(key);
+            if (_mainMenu.SelectionMade)
             {
-                string selectedItem = menu.GetSelectedItem();
-                break;
+                string selectedItem = _mainMenu.GetSelectedItem();
+                if (selectedItem == "Exit")
+                {
+                    break;
+                }
+                else if (Utilities.ConvertDictionaryValuesToList(_menuItems).Contains(selectedItem))
+                {
+                    if (selectedItem == "New Game") newGame.Start();
+                    else if (selectedItem == "Load Game") newLoad.Start();
+                    else if (selectedItem == "Campaign") newCampaign.Start();
+                    else if (selectedItem == "Credits") newCredits.Start();
+                }
+                _mainMenu.SelectionMade = false;
             }
             
         } while (true);
