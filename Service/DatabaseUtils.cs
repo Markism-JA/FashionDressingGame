@@ -8,38 +8,94 @@ public static class DatabaseUtils
     private static FashionGameDbContext _dbContext = new FashionGameDbContext();
     private static CharacterService _characterService = new CharacterService(_dbContext);
 
-    public static void AddCharacter(ECharacter? character)
+    public static string AddCharacter(ECharacter? character)
     {
-        if (character == null)
+        try
         {
-            throw new ArgumentNullException(nameof(character), "Character cannot be null.");
+            if (character == null)
+            {
+                throw new ArgumentNullException(nameof(character), "Character cannot be null.");
+            }
+
+            _characterService.AddCharacter(character);
+            return "Character added successfully.";
         }
-
-        _characterService.AddCharacter(character);
-    }
-
-    public static void UpdateCharacter(int characterId, ECharacter updatedCharacter)
-    {
-        if (updatedCharacter == null)
+        catch (Exception ex)
         {
-            throw new ArgumentNullException(nameof(updatedCharacter), "Updated character cannot be null.");
+            return $"Failed to add character: {ex.Message}";
         }
-
-        _characterService.UpdateCharacter(characterId, updatedCharacter);
     }
 
-    public static void DeleteCharacter(int characterId)
+    public static string UpdateCharacter(int characterId, ECharacter updatedCharacter)
     {
-        _characterService.DeleteCharacter(characterId);
+        try
+        {
+            if (updatedCharacter == null)
+            {
+                throw new ArgumentNullException(nameof(updatedCharacter), "Updated character cannot be null.");
+            }
+
+            _characterService.UpdateCharacter(characterId, updatedCharacter);
+            return "Character updated successfully.";
+        }
+        catch (KeyNotFoundException knfEx)
+        {
+            return $"Character update failed: {knfEx.Message}";
+        }
+        catch (Exception ex)
+        {
+            return $"Failed to update character: {ex.Message}";
+        }
     }
 
-    public static ECharacter? GetCharacterById(int characterId)
+    public static string DeleteCharacter(int characterId)
     {
-        return _characterService.GetCharacterById(characterId);
+        try
+        {
+            _characterService.DeleteCharacter(characterId);
+            return "Character deleted successfully.";
+        }
+        catch (KeyNotFoundException knfEx)
+        {
+            return $"Character deletion failed: {knfEx.Message}";
+        }
+        catch (Exception ex)
+        {
+            return $"Failed to delete character: {ex.Message}";
+        }
     }
 
-    public static Dictionary<int, ECharacter> GetAllCharactersAsDictionary()
+    public static (ECharacter? character, string message) GetCharacterById(int characterId)
     {
-        return _characterService.GetAllCharactersAsDictionary(); 
+        try
+        {
+            var character = _characterService.GetCharacterById(characterId);
+            if (character == null)
+            {
+                return (null, $"Character with ID {characterId} not found.");
+            }
+            return (character, "Character retrieved successfully.");
+        }
+        catch (Exception ex)
+        {
+            return (null, $"Failed to retrieve character: {ex.Message}");
+        }
+    }
+
+    public static (Dictionary<int, ECharacter> characters, string message) GetAllCharactersAsDictionary()
+    {
+        try
+        {
+            var characters = _characterService.GetAllCharactersAsDictionary();
+            if (characters.Count == 0)
+            {
+                return (characters, "No characters found in the database.");
+            }
+            return (characters, "Characters retrieved successfully.");
+        }
+        catch (Exception ex)
+        {
+            return (null, $"Failed to retrieve characters: {ex.Message}");
+        }
     }
 }

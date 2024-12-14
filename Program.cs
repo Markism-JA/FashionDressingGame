@@ -12,6 +12,7 @@ namespace FashionDressingGame
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.Title = "FashionDressingGame";
             
+            Console.CursorVisible = false;
             MainMenu newGame = new MainMenu();
             try
             {
@@ -19,11 +20,9 @@ namespace FashionDressingGame
             }
             catch (Exception ex)
             {
-                
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
-
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
             
         }
         

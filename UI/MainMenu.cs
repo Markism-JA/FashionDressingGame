@@ -38,7 +38,6 @@ public class MainMenu
     private Menu _mainMenu = new Menu(_menuItems, 44, 15, 13, 10);
     public void Start()
     {
-        New newGame = new New();
         Load newLoad = new Load();
         Campaign newCampaign = new Campaign(); 
         Credits newCredits = new Credits();
@@ -50,27 +49,37 @@ public class MainMenu
         _mainWindow.AddChild(_mainMenuTitle);
         do
         {
-            _mainWindow.AddChild(_mainMenu);
-            _mainWindow.RenderAll();
-            ConsoleKey key = Console.ReadKey(true).Key;
-            _mainMenu.HandleInput(key);
-            if (_mainMenu.SelectionMade)
+            try
             {
-                string selectedItem = _mainMenu.GetSelectedItem();
-                if (selectedItem == "Exit")
+                _mainWindow.AddChild(_mainMenu);
+                _mainWindow.RenderAll();
+                ConsoleKey key = Console.ReadKey(true).Key;
+                _mainMenu.HandleInput(key);
+                if (_mainMenu.SelectionMade)
                 {
-                    break;
+                    string selectedItem = _mainMenu.GetSelectedItem();
+                    if (selectedItem == "Exit")
+                    {
+                        break;
+                    }
+                    else if (Utilities.ConvertDictionaryValuesToList(_menuItems).Contains(selectedItem))
+                    {
+                        if (selectedItem == "New Game")
+                        {
+                            New newGame = new New();
+                            newGame.Start();
+                        }
+                        else if (selectedItem == "Load Game") newLoad.Start();
+                        else if (selectedItem == "Campaign") newCampaign.Start();
+                        else if (selectedItem == "Credits") newCredits.Start();
+                    }
+                    _mainMenu.SelectionMade = false;
                 }
-                else if (Utilities.ConvertDictionaryValuesToList(_menuItems).Contains(selectedItem))
-                {
-                    if (selectedItem == "New Game") newGame.Start();
-                    else if (selectedItem == "Load Game") newLoad.Start();
-                    else if (selectedItem == "Campaign") newCampaign.Start();
-                    else if (selectedItem == "Credits") newCredits.Start();
-                }
-                _mainMenu.SelectionMade = false;
             }
-            
+            catch (Exception e)
+            {
+                continue;
+            }
         } while (true);
     }
 
