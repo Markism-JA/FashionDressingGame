@@ -67,7 +67,7 @@ public class New
         "                                            "
     ];
     
-    private Window _characterWindow = new(null, null, WindowWidth, WindowHeight)
+    protected Window _characterWindow = new(null, null, WindowWidth, WindowHeight)
     {   
         BorderOn = true,
         BorderHorizontal = '*',
@@ -95,15 +95,15 @@ public class New
     };
 
     
-    private Label _valueMissingWarning = new("Values Missing", null,28,null,null, Align.Center);
+    protected Label _valueMissingWarning = new("Values Missing", null,28,null,null, Align.Center);
 
-    private static int _menuWidth = 25;
-    private static int _menuX = 25;
+    protected static int _menuWidth = 25;
+    protected static int _menuX = 25;
     
     //Character Info state
-    private Title _characterTitle = new(_whoAreYou, null, 6, ConsoleColor.Black, ConsoleColor.Magenta, Align.Center);
-    private Label _namelabel = new Label("Name:", 33,14,ConsoleColor.Black,ConsoleColor.DarkBlue, Align.Left);
-    private static Label _nameWarning = new Label("", null,15,null,null, Align.Center);
+    protected Title _characterTitle = new(_whoAreYou, null, 6, ConsoleColor.Black, ConsoleColor.Magenta, Align.Center);
+    protected Label _namelabel = new Label("Name:", 33,14,ConsoleColor.Black,ConsoleColor.DarkBlue, Align.Left);
+    protected static Label _nameWarning = new Label("", null,15,null,null, Align.Center);
     protected TextBox _nameText = new TextBox(40, 14, 30, 1, 30);
     protected MenuForms _characterMenu = new(Service.Info.Character.CharacterMenu, _menuX, 18, _menuWidth, 10);
 
@@ -158,7 +158,7 @@ public class New
 
     }
     
-    public int GetCharacterInfo()
+    public virtual int GetCharacterInfo()
     {
         Action _addName = () => { _nameText.IsFinalized = false; _characterWindow.AddChild(_nameWarning); 
         _characterWindow.RenderAll(); };
@@ -188,7 +188,8 @@ public class New
                 {
                     "" => "Entered name is empty.",
                     var s when string.IsNullOrWhiteSpace(s) => "Name contains only whitespace.",
-                    var s when System.Text.RegularExpressions.Regex.IsMatch(s, @"[^\w\s-]") => "Name contains special characters.",
+                    var s when System.Text.RegularExpressions.Regex.IsMatch(s, @"[^\w\s-]|_") => "Name contains special characters.",
+                    var s when UserNameExists(s) => "Name is already taken.",
                     _ => null
                 })!;
 
@@ -245,9 +246,9 @@ public class New
                     _characterWindow.RemoveChild(_characterMenu);
                     var(dictionary, column, x, y) = selectedItem switch
                     {
-                        "Gender" => (Service.Info.Character.Gender, 1, 40, 18),
-                        "Height" => (Service.Info.Character.Height, 1, 40, 18),
-                        "Age" => (Service.Info.Character.Age, 1, 40, 18),
+                        "Gender" => (Service.Info.Character.Gender, 1, 35, 18),
+                        "Height" => (Service.Info.Character.Height, 1, 35, 18),
+                        "Age" => (Service.Info.Character.Age, 1, 35, 18),
                         _ => throw new InvalidOperationException("Unexpected selected item"),
                     };
                     
@@ -321,17 +322,17 @@ public class New
                     _appearanceWindow.RemoveChild(_valueMissingWarning);
                     var (dictionary, column, x, y) = selectedItem switch
                     {
-                        "Skin Tone" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.SkinTone), 2, 30,16),
-                        "Eye Color" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.EyeColor), 2, 30, 16),
-                        "Hair Style" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.HairStyles), 3, 20, 15),
-                        "Hair Color" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.HairColor), 3, 20, 16),
-                        "Face Shape" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.FaceShape), 2, 30, 16),
+                        "Skin Tone" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.SkinTone), 2, 25,16),
+                        "Eye Color" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.EyeColor), 2, 25, 16),
+                        "Hair Style" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.HairStyles), 3, 12, 15),
+                        "Hair Color" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.HairColor), 3, 10, 16),
+                        "Face Shape" => (Utilities.CreateSequentialDictionary(Service.Info.Appearance.FaceShape), 2, 25, 16),
                         _ => throw new InvalidOperationException("Unexpected selected item."),
                     };
                     
                     var value = ProcessMenu(dictionary, _appearanceWindow, _appearanceMenu, y, x, column);
                     
-                    _appearanceMenu.SetFormValue(selectedItem, value);
+                    _appearanceMenu.SetFormValue(selectedItem, GetValue(value));
                     if (selectedItem == "Skin Tone") _appearanceInfo.Skintone = value;
                     else if (selectedItem == "Eye Color") _appearanceInfo.Eyecolor = value;
                     else if (selectedItem == "Hair Style") _appearanceInfo.Hairstyle = value;
@@ -385,30 +386,30 @@ public class New
                     {
                         "Top" => (null, 0, 0, 0, new Action(() => GetTopInfo())),
                         "Bottom" => (null, 0, 0, 0, new Action(() => GetBottomInfo())),
-                        "Shoe" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.ShoeType), 3, 20, 13, (Action?)null),
-                        "Accessory" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.Accessories), 3, 20, 13, (Action?)null),
-                        "Gloves" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.Gloves), 1, 40, 13, null),
+                        "Shoe" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.ShoeType), 3, 12, 13, (Action?)null),
+                        "Accessory" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.Accessories), 3, 12, 13, (Action?)null),
+                        "Gloves" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.Gloves), 1, 35, 13, null),
                         "Jewelry" => (null, 0, 0, 0, new Action((() => GetJewelryInfo()))),
-                        "Outfit Themes" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.OutfitThemes), 3, 20, 13, (Action?)null),
+                        "Outfit Themes" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.OutfitThemes), 3, 12, 13, (Action?)null),
                         "Outer Wear" => (null, 0, 0, 0, new Action( (() => GetOuterWearInfo()))),
-                        "Hat" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.Hats), 3, 20, 13, (Action?)null),
-                        "Formal Wear" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.FormalWear), 1, 40, 13, null),
+                        "Hat" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.Hats), 3, 12, 13, (Action?)null),
+                        "Formal Wear" => (Utilities.CreateSequentialDictionary(Service.Info.Clothing.FormalWear), 1, 35, 13, null),
                         _ => throw new InvalidOperationException("Unexpected selected item."),
                     };
 
                     if (action != null)
                     {
                         action();
-                        if (selectedItem == "Top") _clothingMainMenu.SetFormValue(selectedItem, $"{_topInfo.TopType} : {_topInfo.TopMaterial}");
-                        else if (selectedItem == "Bottom") _clothingMainMenu.SetFormValue(selectedItem, $"{_bottomInfo.BottomType} : {_bottomInfo.BottomMaterial}");
+                        if (selectedItem == "Top") _clothingMainMenu.SetFormValue(selectedItem, $"{GetValue(_topInfo.TopType + " : " + _topInfo.TopMaterial)}");
+                        else if (selectedItem == "Bottom") _clothingMainMenu.SetFormValue(selectedItem, $"{GetValue(_bottomInfo.BottomType + " : " +  _bottomInfo.BottomMaterial)}");
                         else if (selectedItem == "Jewelry") _clothingMainMenu.SetFormValue(selectedItem, _getJewelryEmojis(_jewelryInfo));
-                        else if (selectedItem == "Outer Wear") _clothingMainMenu.SetFormValue(selectedItem, $"{_outerwearInfo.Outerwear} : {_outerwearInfo.OuterwearType}");
+                        else if (selectedItem == "Outer Wear") _clothingMainMenu.SetFormValue(selectedItem, GetValue($"{_outerwearInfo.Outerwear} : {_outerwearInfo.OuterwearType}"));
                     }
                     else
                     {
                         var value = ProcessMenu(dictionary!, _clothingWindow, _clothingMainMenu, y, x, column);
                         
-                        _clothingMainMenu.SetFormValue(selectedItem, value);
+                        _clothingMainMenu.SetFormValue(selectedItem, GetValue(value));
                         if (selectedItem == "Shoe") _clothingInfo.ShoeType = value;
                         else if (selectedItem == "Accessory") _clothingInfo.Accessory = value;
                         else if (selectedItem == "Gloves") _clothingInfo.Gloves = value;
@@ -454,8 +455,8 @@ public class New
                     _clothingWindow.RemoveChild(_topWarning);
                     var (dictionary, column, x, y) = selectedItem switch
                     {
-                        "Type" => (Utilities.CreateSequentialDictionary(Service.Info.Top.TopType), 3, 20, 13),
-                        "Material" => (Utilities.CreateSequentialDictionary(Service.Info.Top.Materials), 3, 20, 13),
+                        "Type" => (Utilities.CreateSequentialDictionary(Service.Info.Top.TopType), 3, 10, 13),
+                        "Material" => (Utilities.CreateSequentialDictionary(Service.Info.Top.Materials), 3, 10, 13),
                         _ => throw new InvalidOperationException("Unexpected selected item."),
                     };
 
@@ -502,8 +503,8 @@ public class New
                     _clothingWindow.RemoveChild(_bottomWarning);
                     var (dictionary, column, x, y) = selectedItem switch
                     {
-                        "Type" => (Utilities.CreateSequentialDictionary(Service.Info.Bottom.BottomType), 3, 20, 13),
-                        "Material" => (Utilities.CreateSequentialDictionary(Service.Info.Bottom.Materials), 3, 20, 13),
+                        "Type" => (Utilities.CreateSequentialDictionary(Service.Info.Bottom.BottomType), 3, 10, 13),
+                        "Material" => (Utilities.CreateSequentialDictionary(Service.Info.Bottom.Materials), 3, 10, 13),
                         _ => throw new InvalidOperationException("Unexpected selected item."),
                     };
                     var value = ProcessMenu(dictionary!, _clothingWindow, _bottomMenu, y, x, column);
@@ -549,8 +550,8 @@ public class New
                     _clothingWindow.RemoveChild(_outerwearWarning);
                     var (dictionary, column, x, y) = selectedItem switch
                     {
-                        "Outer Wear" => (Utilities.CreateSequentialDictionary(Service.Info.OuterWear.OuterWearName), 3, 20, 13),
-                        "Outer Wear Type" => (Utilities.CreateSequentialDictionary(Service.Info.OuterWear.OuterWearType), 2, 29, 13),
+                        "Outer Wear" => (Utilities.CreateSequentialDictionary(Service.Info.OuterWear.OuterWearName), 3, 10, 13),
+                        "Outer Wear Type" => (Utilities.CreateSequentialDictionary(Service.Info.OuterWear.OuterWearType), 2, 25, 13),
                         _ => throw new InvalidOperationException("Unexpected selected item."),
                     };
                     
@@ -591,11 +592,11 @@ public class New
                     _clothingWindow.RemoveChild(_optional);
                     var (dictionary, column, x, y) = selectedItem switch
                     {
-                        "Watches" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Watches), 1, 40, 13),
-                        "Earrings" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Earrings), 1, 40, 13 ),
-                        "Chains" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Chains), 1, 40, 13),
-                        "Anklets" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Anklets), 1, 40, 13),
-                        "Cufflinks" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Cufflinks), 1, 40, 13),
+                        "Watches" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Watches), 1, 35, 13),
+                        "Earrings" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Earrings), 1, 35, 13 ),
+                        "Chains" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Chains), 1, 35, 13),
+                        "Anklets" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Anklets), 1, 35, 13),
+                        "Cufflinks" => (Utilities.CreateSequentialDictionary(Service.Info.Jewelry.Cufflinks), 1, 35, 13),
                         _ => throw new InvalidOperationException("Unexpected selected item."),
                     };
                     
@@ -618,12 +619,13 @@ public class New
         _clothingWindow.RemoveChild(_optional);
         _clothingWindow.RenderAll();
     }
-    private string ProcessMenu(Dictionary<int, string> dictionary, Window window, MenuForms mainMenu, int y, int x, int column)
+
+    protected string ProcessMenu(Dictionary<int, string> dictionary, Window window, MenuForms mainMenu, int y, int x, int column)
     {
         window.RemoveChild(mainMenu);
         window.RenderAll();
 
-        Menu menu = new(dictionary, x, y, 20, 10) { Columns = column };
+        Menu menu = new(dictionary, x, y, 25, 10) { Columns = column };
         string selectedValue = null;
 
         do
@@ -676,8 +678,8 @@ public class New
 
         return _checkboxWidget.CheckedStates;
     }
-    
-    private Func<object, bool> _isTupleNullOrEmpty = tuple =>
+
+    protected Func<object, bool> _isTupleNullOrEmpty = tuple =>
         tuple.GetType().GetFields().Any(f =>
         {
             var value = f.GetValue(tuple);
@@ -732,6 +734,12 @@ public class New
     }
 
     protected CheckBox _checkboxWidget = new CheckBox(Service.Info.Appearance.OptionalMenu, 42, 18, 10, 1);
+
+    private static string GetValue(string s)
+    {
+        if (s.Length > 25) return s.Substring(0, 18) + "...";
+        else return s;
+    }
 
     public int ShowGradingAnimation()
     {
@@ -844,5 +852,14 @@ public class New
 
         return 1;
     }
+
+    private bool UserNameExists(string s)
+    {
+        return DatabaseUtils
+            .GetAllCharactersAsDictionary().characters.Values
+            .Select(e => e.Name)
+            .Any(name => string.Equals(name, s, StringComparison.OrdinalIgnoreCase));
+    }
+
 
 }

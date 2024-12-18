@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace FashionDressingGame.Database;
 
@@ -86,3 +85,6 @@ public class FashionGameDbContext : DbContext
             .HasDatabaseName("IX_EClothing_Jewelry");
     }
 }
+
+//dotnet ef migrations add InitialCreate
+// dotnet ef database update

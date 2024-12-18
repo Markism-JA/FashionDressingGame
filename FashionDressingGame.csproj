@@ -51,7 +51,7 @@
         <Link>TUI\Pane.cs</Link>
       </Compile>
       <Compile Include="..\TUI\TableMenu.cs">
-        <Link>TUI\TableMenu.cs</Link>
+        <Link>UI\TableMenu.cs</Link>
       </Compile>
       <Compile Include="..\TUI\TerminalBuffer.cs">
         <Link>TUI\TerminalBuffer.cs</Link>

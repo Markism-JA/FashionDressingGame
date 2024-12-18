@@ -73,12 +73,23 @@ public class MainMenu
                         else if (selectedItem == "Campaign") newCampaign.Start();
                         else if (selectedItem == "Credits") newCredits.Start();
                     }
+
                     _mainMenu.SelectionMade = false;
                 }
             }
             catch (Exception e)
             {
-                continue;
+                Console.Clear();
+                Label label = new Label("Error" , 0, 10, null, null, Align.Center);
+                Label pressAny = new Label("Press any key to go back to Character Selection", 0, 33, null, null, Align.Center);
+                
+                Console.WriteLine(e.StackTrace);
+
+                _mainWindow.AddChild(label);
+                _mainWindow.AddChild(pressAny);
+                _mainWindow.RenderAll();
+
+                Console.ReadKey();
             }
         } while (true);
     }

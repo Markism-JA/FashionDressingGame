@@ -144,7 +144,6 @@ public class Update : New
         _clothingMainMenu.SetFormValue("Outfit Themes", character.Clothing.OutfitTheme);
         _clothingMainMenu.SetFormValue("Formal Wear", character.Clothing.FormalWear);
         
-        //Bool Checkbox
         if (_checkboxWidget != null)
         {
             foreach (var option in _checkboxWidget.CheckedStates.Keys.ToList())
@@ -183,5 +182,124 @@ public class Update : New
         }
         return string.Join(", ", selectedFeatures);
     }
+    
+    public override int GetCharacterInfo()
+    {
+        Action _addName = () => { _nameText.IsFinalized = false; _characterWindow.AddChild(_nameWarning); 
+        _characterWindow.RenderAll(); };
+        Action _removeName = () => { _characterWindow.RemoveChild(_nameWarning); };
+
+        
+        int val = 0;
+        Console.Write("\x1B[?47h"); //Move to a different buffer
+        _characterWindow.AddChild(_characterTitle);
+        _characterWindow.AddChild(_namelabel);
+        _characterWindow.AddChild(_nameWarning);
+        _characterWindow.AddChild(_nameText);
+        _characterWindow.AddChild(_characterMenu);
+        
+        bool finalizedName = true;
+        ConsoleKeyInfo keyInfo;
+
+        do
+        {
+            _characterWindow.RenderAll();
+            keyInfo = Console.ReadKey(true); 
+            _nameText.HandleInput(keyInfo);
+            if (_nameText.IsFinalized)
+            {
+                _characterInfo.Name = _nameText.Text;
+                string warningMessage = (_characterInfo.Name switch
+                {
+                    "" => "Entered name is empty.",
+                    var s when string.IsNullOrWhiteSpace(s) => "Name contains only whitespace.",
+                    var s when System.Text.RegularExpressions.Regex.IsMatch(s, @"[^\w\s-]|_") => "Name contains special characters.",
+                    _ => null
+                })!;
+
+                if (warningMessage != null)
+                {
+                    _nameWarning.Content = new[] { warningMessage };
+                    _addName();
+                }
+                else
+                {
+                    finalizedName = false;
+                    _removeName();
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.Escape)
+            {
+                finalizedName = false;
+                _removeName();
+                
+                Console.Clear();
+                Console.Write("\x1B[?47l");
+                return val;
+            }
+        } while (finalizedName);
+
+        do
+        {
+            _characterWindow.AddChild(_characterMenu);
+            _characterWindow.RenderAll();
+            ConsoleKey key = Console.ReadKey(true).Key;
+            _characterMenu.HandleInput(key);
+
+            if (_characterMenu.SelectionMade)
+            {
+                string selectedItem = _characterMenu.GetSelectedItem();
+                if (selectedItem == "Next")
+                {
+                    if (!_isTupleNullOrEmpty(_characterInfo))
+                    {
+                        _nameText.IsFinalized = false;
+                        _characterMenu.SelectionMade = false;
+                        val = 1;
+                        break;
+                    }
+                    else
+                    {
+                        _characterWindow.AddChild(_valueMissingWarning);
+                    }
+                }
+                else if (Utilities.ConvertDictionaryValuesToList(Service.Info.Character.CharacterMenu)
+                         .Contains(selectedItem))
+                {
+                    _characterWindow.RemoveChild(_valueMissingWarning);
+                    _characterWindow.RemoveChild(_characterMenu);
+                    var(dictionary, column, x, y) = selectedItem switch
+                    {
+                        "Gender" => (Service.Info.Character.Gender, 1, 35, 18),
+                        "Height" => (Service.Info.Character.Height, 1, 35, 18),
+                        "Age" => (Service.Info.Character.Age, 1, 35, 18),
+                        _ => throw new InvalidOperationException("Unexpected selected item"),
+                    };
+                    
+                    var value = ProcessMenu(dictionary, _characterWindow, _characterMenu, y, x, column);
+                    
+                    _characterMenu.SetFormValue(selectedItem, value);
+                    if (selectedItem == "Gender") _characterInfo.Gender = value;
+                    else if (selectedItem == "Height") _characterInfo.Height = value;
+                    else  if (selectedItem == "Age") _characterInfo.Age = value;
+                }
+
+                _characterMenu.SelectionMade = false;
+            }
+
+            if (key == ConsoleKey.Escape)
+            {
+                _nameText.IsFinalized = false;
+                break;
+            }
+        } while (true);
+        
+        
+        Console.Clear();
+        Console.Write("\x1B[?47l");
+        
+        return val;
+    }
+
 
 }
